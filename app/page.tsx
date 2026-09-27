@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { CurriculumRoadmap } from "@/components/curriculum-roadmap";
 import { LessonRuntime } from "@/components/lesson-runtime";
+import { AssessmentEngine } from "@/components/assessment-engine";
+import { ParentDashboard } from "@/components/parent-dashboard";
 
 type View = "home" | "lesson" | "assessment" | "parent" | "web3";
 type Teacher = "Jenna" | "JohnPC";
@@ -99,8 +101,8 @@ export default function HomePage() {
 
       {view==="home" && <Home setView={setView} teacher={teacher} setTeacher={setTeacher} level={level} profile={profile} lessons={lessons} onAgeChange={changeChildAge}/>}
       {view==="lesson" && <LessonStudio teacher={teacher} cameraAllowed={camera} microAllowed={micro} profile={profile} lessons={lessons} lang={lang}/>}
-      {view==="assessment" && <Assessment done={assessmentDone} setDone={setAssessmentDone} setLevel={setLevel} level={level}/>}
-      {view==="parent" && <Parent teacher={teacher} setTeacher={setTeacher} camera={camera} setCamera={setCamera} micro={micro} setMicro={setMicro} profile={profile} loginPi={loginPi} piUser={piUser}/>}
+      {view==="assessment" && <AssessmentEngine profile={profile} onLevel={setLevel}/>}
+      {view==="parent" && <ParentDashboard teacher={teacher} setTeacher={setTeacher} camera={camera} setCamera={setCamera} micro={micro} setMicro={setMicro} profile={profile} loginPi={loginPi} piUser={piUser}/>}
       {view==="web3" && <Web3/>}
     </main>
   </div>
