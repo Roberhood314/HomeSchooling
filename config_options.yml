@@ -1,0 +1,34 @@
+title: AI HomeSchool Configuration
+eyebrow: AI HomeSchool
+description: Configure secure local services and optional OpenAI tutoring for AI HomeSchool.
+output_file: .env
+after_save: Configuration saved. Restart or reinstall the app to apply changes.
+
+fields:
+  - name: ADMIN_PASSWORD
+    label: Administrator Password
+    type: password
+    required: true
+    preserve_if_blank: true
+    help: Password used to protect administrator access.
+
+  - name: DATABASE_PASSWORD
+    label: Local Database Password
+    type: password
+    required: true
+    preserve_if_blank: true
+    help: Password for the private PostgreSQL database used only inside this SoloHost stack.
+
+  - name: OPENAI_API_KEY
+    label: OpenAI API Key
+    type: password
+    required: false
+    preserve_if_blank: true
+    help: Optional. Enables external AI tutoring. Leave blank to use local fallback behavior.
+
+  - name: OPENAI_MODEL
+    label: OpenAI Model
+    type: text
+    required: true
+    default: gpt-5.6
+    help: Model used by the external AI tutor.
