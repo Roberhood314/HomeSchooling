@@ -40,3 +40,36 @@ export async function POST(req: NextRequest) {
   );
   return NextResponse.json({ ok: true, profile: result.rows[0] }, { status: 201 });
 }
+
+
+export async function PATCH(req: NextRequest) {
+  const pid = parentId(req);
+  await ensureParent(pid);
+  const body = await req.json().catch(() => ({}));
+  const id = String(body.id || "");
+  if (!id) return NextResponse.json({ ok:false, error:"profile id required" }, { status:400 });
+
+  const existing = await db().query(
+    "SELECT * FROM child_profiles WHERE id=$1 AND parent_id=$2",
+    [id,pid]
+  );
+  if (!existing.rows[0]) return NextResponse.json({ ok:false, error:"profile not found" }, { status:404 });
+
+  const prev = existing.rows[0];
+  const age = body.age === undefined ? prev.age : Number(body.age);
+  if (!Number.isInteger(age) || age < 3 || age > 9) {
+    return NextResponse.json({ ok:false, error:"age must be 3-9" }, { status:400 });
+  }
+  const level = body.level === undefined ? prev.level : Math.max(1, Math.min(10, Number(body.level)));
+  const teacher = body.aiTeacher === undefined ? prev.ai_teacher : body.aiTeacher === "JohnPC" ? "JohnPC" : "Jenna";
+  const language = body.preferredLanguage === undefined ? prev.preferred_language : ["vi","en","zh"].includes(body.preferredLanguage) ? body.preferredLanguage : prev.preferred_language;
+
+  const result = await db().query(
+    `UPDATE child_profiles
+       SET age=$1, level=$2, ai_teacher=$3, preferred_language=$4, updated_at=NOW()
+     WHERE id=$5 AND parent_id=$6
+     RETURNING *`,
+    [age, level, teacher, language, id, pid]
+  );
+  return NextResponse.json({ ok:true, profile:result.rows[0] });
+}
