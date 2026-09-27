@@ -1,19 +1,24 @@
 {
   "name": "ai-homeschool",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "node scripts/migrate.mjs && next start",
+    "migrate": "node scripts/migrate.mjs",
+    "sync:curriculum": "node scripts/sync-curriculum.mjs"
   },
   "dependencies": {
+    "ioredis": "^5.4.2",
     "next": "15.5.12",
+    "pg": "^8.13.1",
     "react": "^19",
     "react-dom": "^19"
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/pg": "^8.11.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "typescript": "^5"
