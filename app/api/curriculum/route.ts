@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
-  const age = Math.max(3, Math.min(17, Number(url.searchParams.get("age") || 7)));
+  const age = Math.max(3, Math.min(9, Number(url.searchParams.get("age") || 7)));
   const level = Math.max(1, Math.min(10, Number(url.searchParams.get("level") || 2)));
   const language = url.searchParams.get("language") || "en";
   const subject = url.searchParams.get("subject");
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     subjectSql = ` AND subject = $${values.length}`;
   }
 
-  const result = await db().query(
+  let result = await db().query(
     `SELECT l.id,l.subject,l.title,l.min_age,l.max_age,l.level,l.language,l.version,l.content,l.skills,
             s.name AS source_name,s.license AS source_license,s.url AS source_url
        FROM lessons l
@@ -38,7 +38,27 @@ export async function GET(req: NextRequest) {
     values
   );
 
-  const payload = { ok: true, lessons: result.rows, updatedAt: new Date().toISOString() };
+  if (!result.rows.length) {
+    const fallbackValues: unknown[] = [age, language];
+    let fallbackSubjectSql = "";
+    if (subject) {
+      fallbackValues.push(subject);
+      fallbackSubjectSql = ` AND subject = ${fallbackValues.length}`;
+    }
+    result = await db().query(
+      `SELECT l.id,l.subject,l.title,l.min_age,l.max_age,l.level,l.language,l.version,l.content,l.skills,
+              s.name AS source_name,s.license AS source_license,s.url AS source_url
+         FROM lessons l
+         LEFT JOIN curriculum_sources s ON s.id=l.source_id
+        WHERE l.active=TRUE AND $1 BETWEEN l.min_age AND l.max_age
+          AND l.language=$2 ${fallbackSubjectSql}
+        ORDER BY l.level,l.subject,l.title
+        LIMIT 100`,
+      fallbackValues
+    );
+  }
+
+  const payload = { ok: true, lessons: result.rows, updatedAt: new Date().toISOString(), requested:{age,level,language,subject:subject||null} };
   try {
     const redis = cache();
     if (redis.status === "wait") await redis.connect();
