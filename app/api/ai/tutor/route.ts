@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { localTutorFallback, validateTutorInput, type TutorInput } from "@/lib/server/guardrails";
 import { runExternalTutor } from "@/lib/server/ai-providers";
 import { db } from "@/lib/server/db";
+import { isResponse, requireOwnedChild } from "@/lib/server/auth";
 
 export async function POST(req: NextRequest) {
   const raw = await req.json().catch(() => ({}));
@@ -19,6 +20,7 @@ export async function POST(req: NextRequest) {
   };
 
   if (childId) {
+    const ownership = await requireOwnedChild(req, childId); if (isResponse(ownership)) return ownership;
     const [profile,progress,assessment] = await Promise.all([
       db().query("SELECT age,level,preferred_language,ai_teacher FROM child_profiles WHERE id=$1",[childId]),
       db().query("SELECT score,skill_map,completed_at FROM learning_progress WHERE child_id=$1 ORDER BY completed_at DESC LIMIT 12",[childId]),
@@ -40,6 +42,8 @@ export async function POST(req: NextRequest) {
       input.mastery=merged;
     }
   }
+
+  if (!childId) return NextResponse.json({ ok:false, error:"childId required" }, { status:400 });
 
   const check = validateTutorInput(input);
   if (!check.ok) return NextResponse.json({ ok:false, blocked:true, reply:check.reason }, { status:400 });

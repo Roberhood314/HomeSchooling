@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
+import { isResponse, requireOwnedChild } from "@/lib/server/auth";
 
 export const dynamic="force-dynamic";
 
@@ -17,6 +18,7 @@ export async function GET(req:NextRequest){
   const u=new URL(req.url);
   const childId=String(u.searchParams.get("childId")||"");
   if(!childId) return NextResponse.json({ok:false,error:"childId required"},{status:400});
+  const ownership=await requireOwnedChild(req,childId); if(isResponse(ownership)) return ownership;
   const p=await db().query("SELECT * FROM child_profiles WHERE id=$1",[childId]);
   const profile=p.rows[0];
   if(!profile) return NextResponse.json({ok:false,error:"profile not found"},{status:404});

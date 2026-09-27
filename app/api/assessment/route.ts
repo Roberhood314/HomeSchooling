@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
+import { isResponse, requireOwnedChild } from "@/lib/server/auth";
 
 function levelLabel(score:number){
   if(score>=85) return "Mastered";
@@ -22,6 +23,7 @@ export async function POST(req:NextRequest){
   if(!childId||!Number.isInteger(age)||age<3||age>9){
     return NextResponse.json({ok:false,error:"Invalid childId or age"},{status:400});
   }
+  const ownership=await requireOwnedChild(req,childId); if(isResponse(ownership)) return ownership;
   const composite=Math.max(0,Math.min(100,accuracy*0.6+Math.min(100,speed)*0.15+Math.max(0,100-repetitions*12)*0.15+Math.min(100,observations.length*10)*0.10));
   const mastery:Record<string,number>={};
   for(const [k,v] of Object.entries(masteryInput)) mastery[k]=Math.max(0,Math.min(1,Number(v)||0));
@@ -36,6 +38,7 @@ export async function POST(req:NextRequest){
 export async function GET(req:NextRequest){
   const childId=new URL(req.url).searchParams.get("childId");
   if(!childId) return NextResponse.json({ok:false,error:"childId required"},{status:400});
+  const ownership=await requireOwnedChild(req,childId); if(isResponse(ownership)) return ownership;
   const r=await db().query("SELECT * FROM assessments WHERE child_id=$1 ORDER BY created_at DESC LIMIT 100",[childId]);
   return NextResponse.json({ok:true,assessments:r.rows});
 }

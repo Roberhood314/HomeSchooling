@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
+import { authenticatedParentId } from "@/lib/server/auth";
 
-async function applyEvent(client:any,event:any){
+async function applyEvent(client:any,event:any,parentId:string){
   const eventUuid=String(event.eventUuid||event.id||crypto.randomUUID());
   const childId=event.childId||null;
   const type=String(event.type||"unknown");
   const payload=event.payload||{};
+  if (!childId) return {eventUuid,status:"failed",error:"childId required"};
+  const owned=await client.query("SELECT id FROM child_profiles WHERE id=$1 AND parent_id=$2",[childId,parentId]);
+  if(!owned.rows[0]) return {eventUuid,status:"failed",error:"child profile not found"};
   const inserted=await client.query(
     "INSERT INTO sync_events(event_uuid,client_id,child_id,event_type,payload) VALUES($1,$2,$3,$4,$5) ON CONFLICT(event_uuid) DO NOTHING RETURNING id",
     [eventUuid,event.clientId,childId,type,JSON.stringify(payload)]
@@ -34,13 +38,15 @@ export async function POST(req: NextRequest) {
   const clientId = String(body.clientId || "");
   const events = Array.isArray(body.events) ? body.events.slice(0, 200) : [];
   if (!clientId) return NextResponse.json({ ok:false,error:"clientId required" }, { status:400 });
+  const parentId=authenticatedParentId(req);
+  if(!parentId) return NextResponse.json({ok:false,error:"Authentication required"},{status:401});
 
   const client=await db().connect();
   const results=[];
   try{
     await client.query("BEGIN");
     for(const raw of events){
-      results.push(await applyEvent(client,{...raw,clientId}));
+      results.push(await applyEvent(client,{...raw,clientId},parentId));
     }
     await client.query("COMMIT");
   }catch(error){
@@ -56,9 +62,11 @@ export async function GET(req: NextRequest) {
   const clientId = url.searchParams.get("clientId");
   const after = Number(url.searchParams.get("after") || 0);
   if (!clientId) return NextResponse.json({ ok:false,error:"clientId required" }, { status:400 });
+  const parentId=authenticatedParentId(req);
+  if(!parentId) return NextResponse.json({ok:false,error:"Authentication required"},{status:401});
   const result = await db().query(
-    "SELECT id,event_uuid,child_id,event_type,payload,applied,apply_error,created_at,applied_at FROM sync_events WHERE client_id=$1 AND id>$2 ORDER BY id ASC LIMIT 500",
-    [clientId,after]
+    "SELECT s.id,s.event_uuid,s.child_id,s.event_type,s.payload,s.applied,s.apply_error,s.created_at,s.applied_at FROM sync_events s JOIN child_profiles c ON c.id=s.child_id WHERE s.client_id=$1 AND c.parent_id=$2 AND s.id>$3 ORDER BY s.id ASC LIMIT 500",
+    [clientId,parentId,after]
   );
   return NextResponse.json({ ok:true, events:result.rows });
 }

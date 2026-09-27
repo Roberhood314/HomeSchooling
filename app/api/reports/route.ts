@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
+import { isResponse, requireOwnedChild } from "@/lib/server/auth";
 
 function isoDate(d:Date){return d.toISOString().slice(0,10)}
 
@@ -8,6 +9,7 @@ export async function POST(req:NextRequest){
   const childId=String(body.childId||"");
   const periodType=body.periodType==="monthly"?"monthly":"weekly";
   if(!childId) return NextResponse.json({ok:false,error:"childId required"},{status:400});
+  const ownership=await requireOwnedChild(req,childId); if(isResponse(ownership)) return ownership;
   const end=new Date(); const start=new Date(end); start.setDate(end.getDate()-(periodType==="weekly"?7:30));
   const [p,a]=await Promise.all([
     db().query("SELECT p.*,l.subject,l.title FROM learning_progress p JOIN lessons l ON l.id=p.lesson_id WHERE p.child_id=$1 AND p.completed_at BETWEEN $2 AND $3 ORDER BY p.completed_at",[childId,start,end]),
@@ -28,6 +30,7 @@ export async function POST(req:NextRequest){
 export async function GET(req:NextRequest){
   const u=new URL(req.url); const childId=u.searchParams.get("childId");
   if(!childId) return NextResponse.json({ok:false,error:"childId required"},{status:400});
+  const ownership=await requireOwnedChild(req,childId); if(isResponse(ownership)) return ownership;
   const r=await db().query("SELECT * FROM parent_reports WHERE child_id=$1 ORDER BY period_start DESC LIMIT 24",[childId]);
   return NextResponse.json({ok:true,reports:r.rows});
 }

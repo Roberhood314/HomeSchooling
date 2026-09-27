@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
+import { isResponse, requireOwnedChild } from "@/lib/server/auth";
 export const dynamic="force-dynamic";
 export async function GET(req:NextRequest){
   const childId=new URL(req.url).searchParams.get("childId");
   if(!childId) return NextResponse.json({ok:false,error:"childId required"},{status:400});
+  const ownership=await requireOwnedChild(req,childId); if(isResponse(ownership)) return ownership;
   const [profile,progress,assess,consents,achievements]=await Promise.all([
     db().query("SELECT * FROM child_profiles WHERE id=$1",[childId]),
     db().query("SELECT p.*,l.title,l.subject FROM learning_progress p JOIN lessons l ON l.id=p.lesson_id WHERE p.child_id=$1 ORDER BY p.completed_at DESC LIMIT 100",[childId]),

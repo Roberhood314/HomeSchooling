@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
+import { isResponse, requireParent } from "@/lib/server/auth";
 
-function parentId(req: NextRequest) {
-  return req.cookies.get("hs_parent")?.value || req.headers.get("x-parent-id") || "demo-parent";
-}
 
 async function ensureParent(id: string) {
   await db().query("INSERT INTO parents(id,username) VALUES($1,$2) ON CONFLICT(id) DO NOTHING", [id, id === "demo-parent" ? "Demo Parent" : null]);
 }
 
 export async function GET(req: NextRequest) {
-  const pid = parentId(req);
+  const pid = requireParent(req); if (isResponse(pid)) return pid;
   await ensureParent(pid);
   const result = await db().query(
     "SELECT * FROM child_profiles WHERE parent_id=$1 ORDER BY created_at",
@@ -20,7 +18,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const pid = parentId(req);
+  const pid = requireParent(req); if (isResponse(pid)) return pid;
   await ensureParent(pid);
   const body = await req.json().catch(() => ({}));
   const name = String(body.name || "").trim();
@@ -44,7 +42,7 @@ export async function POST(req: NextRequest) {
 
 
 export async function PATCH(req: NextRequest) {
-  const pid = parentId(req);
+  const pid = requireParent(req); if (isResponse(pid)) return pid;
   await ensureParent(pid);
   const body = await req.json().catch(() => ({}));
   const id = String(body.id || "");
