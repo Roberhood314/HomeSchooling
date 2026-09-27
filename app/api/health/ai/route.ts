@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server"; import { configuredProviders } from "@/lib/server/ai-providers"; export async function GET(){const providers=configuredProviders();return NextResponse.json({ok:true,providers,externalLive:Object.values(providers).some(Boolean)})}
