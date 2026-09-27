@@ -27,6 +27,7 @@ export default function HomePage() {
   const [lessons,setLessons] = useState<Lesson[]>([]);
   const [system,setSystem] = useState("Connecting...");
   const [piUser,setPiUser] = useState<string|null>(null);
+  const [authRequired,setAuthRequired] = useState(false);
 
   useEffect(()=>{
     if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(()=>{});
@@ -41,7 +42,13 @@ export default function HomePage() {
   async function bootstrap(){
     const health = await fetch("/api/health",{cache:"no-store"}).then(r=>r.json()).catch(()=>({ok:false}));
     setSystem(health.ok ? "Cloud Online" : "Cloud Degraded");
-    const p = await fetch("/api/profiles",{cache:"no-store"}).then(r=>r.json());
+    const response = await fetch("/api/profiles",{cache:"no-store"});
+    if (response.status === 401) {
+      setAuthRequired(true); setSystem("Sign in required"); return;
+    }
+    const p = await response.json();
+    if (!response.ok) { setSystem("Profile service unavailable"); return; }
+    setAuthRequired(false);
     let first = p.profiles?.[0];
     if(!first){
       const created = await fetch("/api/profiles",{
@@ -96,8 +103,10 @@ export default function HomePage() {
     <main className="main">
       <header className="top">
         <div><small style={{color:"#7a829b"}}>{piUser ? "Pi: "+piUser : "AI HomeSchool Pro"}</small><h1>{title(view)}</h1></div>
-        <div className="langs">{["VI","EN","中文"].map(l=><button key={l} className={lang===l?"on":""} onClick={()=>setLang(l as any)}>{l}</button>)}</div>
+        <div className="langs">{!piUser&&<button className="on" onClick={loginPi}>Đăng nhập Pi</button>}{["VI","EN","中文"].map(l=><button key={l} className={lang===l?"on":""} onClick={()=>setLang(l as any)}>{l}</button>)}</div>
       </header>
+
+      {authRequired&&<section className="card" style={{marginBottom:16,border:"1px solid #d7cdfd"}}><b>Đăng nhập phụ huynh bắt buộc</b><p>Hồ sơ trẻ, tiến độ và AI Tutor chỉ được mở sau khi xác minh Pi ở server.</p><button className="violetBtn" onClick={loginPi}>Đăng nhập Pi an toàn</button></section>}
 
       {view==="home" && <Home setView={setView} teacher={teacher} setTeacher={setTeacher} level={level} profile={profile} lessons={lessons} onAgeChange={changeChildAge}/>}
       {view==="lesson" && <LessonStudio teacher={teacher} cameraAllowed={camera} microAllowed={micro} profile={profile} lessons={lessons} lang={lang}/>}
@@ -174,11 +183,13 @@ function LessonStudio({teacher,cameraAllowed,microAllowed,profile,lessons,lang}:
     setMessages(m=>[...m,{role:"me",text}]);setInput("");setBusy(true);
     try{
       const language=lang==="中文"?"zh":lang==="EN"?"en":"vi";
-      const data=await fetch("/api/ai/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({childId:profile?.id||null,age:profile?.age||7,teacher,language,subject:lesson.subject,lessonTitle:lesson.title,objective:lesson.content?.objective,skillFocus:lesson.skills||[],message:text})}).then(r=>r.json());
+      const response=await fetch("/api/ai/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({childId:profile?.id||null,age:profile?.age||7,teacher,language,subject:lesson.subject,lessonTitle:lesson.title,objective:lesson.content?.objective,skillFocus:lesson.skills||[],message:text})});
+      const data=await response.json();
+      if(!response.ok) throw new Error(data.error||"Tutor request failed");
       const reply=data.reply||"Thầy/cô chưa trả lời được câu này.";
       setMessages(m=>[...m,{role:"ai",text:reply}]);
       speak(reply);
-    }finally{setBusy(false)}
+    }catch(error:any){ setMessages(m=>[...m,{role:"ai",text:error?.message||"Không thể kết nối AI Tutor. Vui lòng thử lại."}]); }finally{setBusy(false)}
   }
 
   async function completeLesson(score:number){
