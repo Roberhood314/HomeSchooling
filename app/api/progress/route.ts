@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/server/db";
 
+async function authorizeChild(req:NextRequest, childId:string){
+  const pid=req.cookies.get("hs_parent")?.value || "demo-parent";
+  const r=await db().query("SELECT 1 FROM child_profiles WHERE id=$1 AND parent_id=$2 LIMIT 1",[childId,pid]);
+  return Boolean(r.rows[0]);
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const childId = String(body.childId || "");
@@ -8,6 +14,7 @@ export async function POST(req: NextRequest) {
   if (!childId || !lessonId) {
     return NextResponse.json({ ok: false, error: "childId and lessonId required" }, { status: 400 });
   }
+  if (!(await authorizeChild(req,childId))) return NextResponse.json({ok:false,error:"Forbidden"},{status:403});
   const score = Math.max(0, Math.min(100, Number(body.score || 0)));
   const duration = Math.max(0, Number(body.durationSeconds || 0));
   const skillMap = body.skillMap || {};
@@ -24,6 +31,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const childId = new URL(req.url).searchParams.get("childId");
   if (!childId) return NextResponse.json({ ok:false,error:"childId required" }, { status:400 });
+  if (!(await authorizeChild(req,childId))) return NextResponse.json({ok:false,error:"Forbidden"},{status:403});
   const result = await db().query(
     `SELECT p.*,l.title,l.subject FROM learning_progress p
      JOIN lessons l ON l.id=p.lesson_id
