@@ -99,6 +99,116 @@ CREATE INDEX IF NOT EXISTS idx_lessons_filter ON lessons(language, level, min_ag
 CREATE INDEX IF NOT EXISTS idx_progress_child ON learning_progress(child_id, completed_at DESC);
 CREATE INDEX IF NOT EXISTS idx_sync_client ON sync_events(client_id, id);
 
+
+ALTER TABLE child_profiles ADD COLUMN IF NOT EXISTS birth_date DATE;
+ALTER TABLE child_profiles ADD COLUMN IF NOT EXISTS interests JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE child_profiles ADD COLUMN IF NOT EXISTS strengths JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE child_profiles ADD COLUMN IF NOT EXISTS support_needs JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE child_profiles ADD COLUMN IF NOT EXISTS learning_style TEXT NOT NULL DEFAULT 'mixed';
+ALTER TABLE child_profiles ADD COLUMN IF NOT EXISTS current_ability JSONB NOT NULL DEFAULT '{}'::jsonb;
+
+CREATE TABLE IF NOT EXISTS learning_paths (
+  id TEXT PRIMARY KEY,
+  child_id TEXT NOT NULL REFERENCES child_profiles(id) ON DELETE CASCADE,
+  age INTEGER NOT NULL CHECK (age BETWEEN 3 AND 9),
+  framework_version INTEGER NOT NULL DEFAULT 1,
+  weekly_plan JSONB NOT NULL DEFAULT '{}'::jsonb,
+  monthly_objectives JSONB NOT NULL DEFAULT '[]'::jsonb,
+  next_actions JSONB NOT NULL DEFAULT '[]'::jsonb,
+  status TEXT NOT NULL DEFAULT 'active',
+  generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS assessments (
+  id TEXT PRIMARY KEY,
+  child_id TEXT NOT NULL REFERENCES child_profiles(id) ON DELETE CASCADE,
+  assessment_type TEXT NOT NULL,
+  subject TEXT,
+  age INTEGER NOT NULL,
+  result JSONB NOT NULL DEFAULT '{}'::jsonb,
+  skill_mastery JSONB NOT NULL DEFAULT '{}'::jsonb,
+  level_label TEXT NOT NULL DEFAULT 'Beginning',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ai_sessions (
+  id BIGSERIAL PRIMARY KEY,
+  child_id TEXT REFERENCES child_profiles(id) ON DELETE SET NULL,
+  teacher TEXT NOT NULL,
+  subject TEXT,
+  lesson_id TEXT REFERENCES lessons(id) ON DELETE SET NULL,
+  provider TEXT,
+  model TEXT,
+  latency_ms INTEGER,
+  prompt_version TEXT NOT NULL DEFAULT 'v1',
+  user_message TEXT,
+  assistant_message TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS voice_sessions (
+  id BIGSERIAL PRIMARY KEY,
+  child_id TEXT REFERENCES child_profiles(id) ON DELETE SET NULL,
+  lesson_id TEXT REFERENCES lessons(id) ON DELETE SET NULL,
+  mode TEXT NOT NULL,
+  language TEXT NOT NULL,
+  transcript TEXT,
+  score NUMERIC(5,2),
+  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS achievements (
+  id TEXT PRIMARY KEY,
+  child_id TEXT NOT NULL REFERENCES child_profiles(id) ON DELETE CASCADE,
+  achievement_type TEXT NOT NULL,
+  title TEXT NOT NULL,
+  data JSONB NOT NULL DEFAULT '{}'::jsonb,
+  awarded_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS parent_reports (
+  id TEXT PRIMARY KEY,
+  child_id TEXT NOT NULL REFERENCES child_profiles(id) ON DELETE CASCADE,
+  period_type TEXT NOT NULL,
+  period_start DATE NOT NULL,
+  period_end DATE NOT NULL,
+  report JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id TEXT PRIMARY KEY,
+  parent_id TEXT NOT NULL REFERENCES parents(id) ON DELETE CASCADE,
+  child_id TEXT REFERENCES child_profiles(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  read_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id BIGSERIAL PRIMARY KEY,
+  actor_id TEXT,
+  actor_role TEXT,
+  action TEXT NOT NULL,
+  entity_type TEXT,
+  entity_id TEXT,
+  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_learning_paths_child ON learning_paths(child_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS idx_assessments_child ON assessments(child_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_sessions_child ON ai_sessions(child_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_voice_sessions_child ON voice_sessions(child_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_achievements_child ON achievements(child_id, awarded_at DESC);
+CREATE INDEX IF NOT EXISTS idx_reports_child ON parent_reports(child_id, period_start DESC);
+CREATE INDEX IF NOT EXISTS idx_notifications_parent ON notifications(parent_id, created_at DESC);
+
+
 INSERT INTO curriculum_sources(id,name,url,license,source_type)
 VALUES
  ('core-internal','AI HomeSchool Core',NULL,'Original / internally authored','internal'),
