@@ -69,11 +69,13 @@ export default function HomePage() {
 
   async function changeChildAge(nextAge:number){
     if(!profile) return;
-    const updated=await fetch("/api/profiles",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:profile.id,age:nextAge,level:nextAge<=4?1:nextAge===5?2:nextAge<=7?3:nextAge===8?4:5})}).then(r=>r.json());
-    if(updated.ok){
-      setProfile(updated.profile);
-      setLevel(updated.profile.level);
-    }
+    setLessons([]);
+    const response=await fetch("/api/profiles",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:profile.id,age:nextAge,level:nextAge<=4?1:nextAge===5?2:nextAge<=7?3:nextAge===8?4:5})});
+    const updated=await response.json();
+    if(!response.ok || !updated.ok) throw new Error(updated.error||"Không thể cập nhật độ tuổi");
+    setProfile(updated.profile);
+    setLevel(updated.profile.level);
+    await loadCurriculum(updated.profile);
   }
 
   async function loginPi(){
@@ -128,7 +130,7 @@ function Home({setView,teacher,setTeacher,level,profile,lessons,onAgeChange}:{se
     {subjects.map(([e,t,s])=><section className="card subject" key={t}><div className="emoji">{e}</div><b>{t}</b><div style={{fontSize:12,color:"#7a829b",marginTop:4}}>{s}</div></section>)}
     <button className={"card teacher "+(teacher==="Jenna"?"selected":"")} onClick={()=>setTeacher("Jenna")}><div className="face">👩‍🏫</div><div style={{textAlign:"left"}}><h3>Jenna AI</h3><p>Ngôn ngữ • phát âm • kể chuyện • hướng dẫn nhẹ nhàng.</p></div></button>
     <button className={"card teacher "+(teacher==="JohnPC"?"selected":"")} onClick={()=>setTeacher("JohnPC")}><div className="face">👨‍💻</div><div style={{textAlign:"left"}}><h3>JohnPC AI</h3><p>Toán • khoa học • STEM • logic • công nghệ.</p></div></button>
-    <CurriculumRoadmap age={profile?.age||7} onAgeChange={onAgeChange}/>
+    <CurriculumRoadmap age={profile?.age||7} lessons={lessons} onAgeChange={onAgeChange}/>
     <section className="card web3"><small style={{color:"#73f2ff"}}>EXPLORER / PARENT</small><h2>π Blockchain • Web3 • Pi Learning Hub</h2><p>Khu học công nghệ riêng, child-safe, không có dự đoán giá hoặc lời khuyên đầu tư.</p><div className="tags">{["Blockchain Basics","Web3","Pi Network","Digital Economy"].map(x=><span className="tag" key={x}>{x}</span>)}</div></section>
   </div>
 }
