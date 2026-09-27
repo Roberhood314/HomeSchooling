@@ -1,0 +1,856 @@
+{
+  "version": 1,
+  "philosophy": {
+    "approach": "Play-based for ages 3–5, guided mastery for ages 6–7, project-based independent learning for ages 8–9.",
+    "languages": [
+      "vi",
+      "en",
+      "zh"
+    ],
+    "principles": [
+      "short sessions",
+      "active recall",
+      "spaced review",
+      "multi-sensory practice",
+      "parent visibility",
+      "age safety",
+      "mastery before acceleration"
+    ]
+  },
+  "ages": [
+    {
+      "age": 3,
+      "stage": "Little Explorer",
+      "sessionMinutes": 10,
+      "weeklySessions": 10,
+      "goals": [
+        "attention 5–10 minutes",
+        "basic vocabulary",
+        "count 1–5",
+        "colors and shapes",
+        "fine motor imitation",
+        "simple routines",
+        "emotion naming"
+      ],
+      "subjects": {
+        "Language": {
+          "units": [
+            "My Name & Family",
+            "Colors & Everyday Objects",
+            "Animals & Sounds",
+            "Body Parts",
+            "Simple Songs & Rhymes"
+          ],
+          "outcomes": [
+            "follow one-step directions",
+            "name familiar objects",
+            "repeat short phrases",
+            "recognize own name"
+          ]
+        },
+        "Mathematics": {
+          "units": [
+            "Count 1–3",
+            "Count 1–5",
+            "Big & Small",
+            "Same & Different",
+            "Circle Square Triangle"
+          ],
+          "outcomes": [
+            "one-to-one counting to 5",
+            "compare two groups visually",
+            "match shapes"
+          ]
+        },
+        "Science": {
+          "units": [
+            "My Five Senses",
+            "Day & Night",
+            "Pets & Wild Animals",
+            "Water Play",
+            "Weather Today"
+          ],
+          "outcomes": [
+            "observe with senses",
+            "name simple natural phenomena",
+            "sort living/non-living examples"
+          ]
+        },
+        "STEM": {
+          "units": [
+            "Stack & Balance",
+            "Build a Bridge with Blocks",
+            "Roll & Ramp",
+            "Simple Cause and Effect"
+          ],
+          "outcomes": [
+            "trial-and-error building",
+            "predict simple outcomes"
+          ]
+        },
+        "Logic": {
+          "units": [
+            "Match Pairs",
+            "Simple Patterns AB",
+            "Find the Missing Picture",
+            "2–4 piece puzzles"
+          ],
+          "outcomes": [
+            "visual matching",
+            "complete simple patterns"
+          ]
+        },
+        "Life Skills": {
+          "units": [
+            "Wash Hands",
+            "Put Toys Away",
+            "Say Please & Thank You",
+            "Safe/Unsafe Touch Basics",
+            "My Feelings"
+          ],
+          "outcomes": [
+            "follow simple routines",
+            "identify trusted adults",
+            "name basic emotions"
+          ]
+        },
+        "Creativity": {
+          "units": [
+            "Finger Painting",
+            "Music & Movement",
+            "Pretend Play",
+            "Story Picture Talk"
+          ],
+          "outcomes": [
+            "express through art and movement",
+            "describe a picture with words"
+          ]
+        },
+        "Movement": {
+          "units": [
+            "Jump & Stop",
+            "Balance Line",
+            "Throw & Catch Large Ball",
+            "Animal Walks"
+          ],
+          "outcomes": [
+            "basic balance",
+            "gross motor coordination"
+          ]
+        }
+      }
+    },
+    {
+      "age": 4,
+      "stage": "Young Learner",
+      "sessionMinutes": 12,
+      "weeklySessions": 12,
+      "goals": [
+        "speak 4–6 word sentences",
+        "count to 10",
+        "recognize common letters",
+        "sequence 3 steps",
+        "cooperative play",
+        "basic safety"
+      ],
+      "subjects": {
+        "Language": {
+          "units": [
+            "Letter Sounds A–M",
+            "My Day",
+            "Story Sequence 1-2-3",
+            "Opposites",
+            "Rhymes & Beginning Sounds"
+          ],
+          "outcomes": [
+            "recognize selected letters",
+            "retell a 3-part story",
+            "answer who/what questions"
+          ]
+        },
+        "Mathematics": {
+          "units": [
+            "Count 1–10",
+            "More/Less",
+            "Patterns AB/ABB",
+            "Shapes in the World",
+            "Position Words"
+          ],
+          "outcomes": [
+            "count to 10",
+            "compare quantities",
+            "continue simple patterns",
+            "use above/below/inside"
+          ]
+        },
+        "Science": {
+          "units": [
+            "Plant Parts",
+            "Animal Homes",
+            "Sink or Float",
+            "Hot & Cold",
+            "Weather Changes"
+          ],
+          "outcomes": [
+            "classify by simple features",
+            "make a prediction then observe"
+          ]
+        },
+        "STEM": {
+          "units": [
+            "Build Tall Towers",
+            "Strong Paper Shapes",
+            "Simple Machines: Ramp",
+            "Make a Boat"
+          ],
+          "outcomes": [
+            "design-test-improve with adult support"
+          ]
+        },
+        "Logic": {
+          "units": [
+            "Maze Level 1",
+            "Spot Differences",
+            "Sort by Color/Shape/Size",
+            "Sequence Cards"
+          ],
+          "outcomes": [
+            "classify by one attribute",
+            "solve simple visual problems"
+          ]
+        },
+        "Life Skills": {
+          "units": [
+            "Dress Myself",
+            "Healthy Food Basics",
+            "Road Safety",
+            "Taking Turns",
+            "Calm Down Tools"
+          ],
+          "outcomes": [
+            "practice independence",
+            "recognize basic safety rules",
+            "use simple self-regulation"
+          ]
+        },
+        "Creativity": {
+          "units": [
+            "Color Mixing",
+            "Rhythm Copying",
+            "Create a Character",
+            "Build from Recycled Materials"
+          ],
+          "outcomes": [
+            "follow and create simple artistic patterns"
+          ]
+        },
+        "Movement": {
+          "units": [
+            "Hop & Balance",
+            "Target Throw",
+            "Follow-the-Leader",
+            "Simple Yoga"
+          ],
+          "outcomes": [
+            "bilateral coordination",
+            "follow movement sequences"
+          ]
+        }
+      }
+    },
+    {
+      "age": 5,
+      "stage": "Kindergarten Ready",
+      "sessionMinutes": 15,
+      "weeklySessions": 14,
+      "goals": [
+        "phonological awareness",
+        "count to 20",
+        "add/subtract concrete within 5",
+        "write simple strokes/letters",
+        "ask questions",
+        "school routines"
+      ],
+      "subjects": {
+        "Language": {
+          "units": [
+            "Alphabet A–Z",
+            "Phonics CVC Intro",
+            "Sight Words Starter",
+            "Story Beginning-Middle-End",
+            "Write My Name"
+          ],
+          "outcomes": [
+            "identify most letters",
+            "blend simple sounds with support",
+            "read a small sight-word set",
+            "retell a short story"
+          ]
+        },
+        "Mathematics": {
+          "units": [
+            "Count 1–20",
+            "Number Bonds to 5",
+            "Add with Objects",
+            "Subtract with Objects",
+            "2D/3D Shapes",
+            "Simple Measurement"
+          ],
+          "outcomes": [
+            "represent quantities to 20",
+            "solve concrete addition/subtraction within 5",
+            "compare length/capacity"
+          ]
+        },
+        "Science": {
+          "units": [
+            "Life Cycle of a Plant",
+            "Living vs Nonliving",
+            "Light & Shadow",
+            "Magnets Intro",
+            "Earth Materials"
+          ],
+          "outcomes": [
+            "record observations with drawings",
+            "explain one simple cause/effect"
+          ]
+        },
+        "STEM": {
+          "units": [
+            "Bridge Challenge",
+            "Paper Airplane Investigation",
+            "Build a Shelter",
+            "Coding Sequences with Arrows"
+          ],
+          "outcomes": [
+            "follow design cycle",
+            "sequence 3–5 commands"
+          ]
+        },
+        "Logic": {
+          "units": [
+            "Sudoku 4x4 Picture",
+            "Pattern ABC",
+            "Simple Deduction",
+            "Tangram Starter"
+          ],
+          "outcomes": [
+            "use elimination",
+            "complete multi-step patterns"
+          ]
+        },
+        "Life Skills": {
+          "units": [
+            "Morning Routine",
+            "Personal Information Safety",
+            "Sharing & Conflict Words",
+            "Money Coins Pretend Play",
+            "Emergency Basics"
+          ],
+          "outcomes": [
+            "follow routines independently",
+            "know what personal information not to share",
+            "ask adult help appropriately"
+          ]
+        },
+        "Creativity": {
+          "units": [
+            "Illustrate a Story",
+            "Music Loud/Soft Fast/Slow",
+            "Collage Design",
+            "Role-play Community Helpers"
+          ],
+          "outcomes": [
+            "create and explain a simple project"
+          ]
+        },
+        "Movement": {
+          "units": [
+            "Skip Prep",
+            "Balance & Throw",
+            "Dance Sequences",
+            "Stretch & Breathe"
+          ],
+          "outcomes": [
+            "coordinate multi-step movements"
+          ]
+        }
+      }
+    },
+    {
+      "age": 6,
+      "stage": "Primary Starter",
+      "sessionMinutes": 20,
+      "weeklySessions": 15,
+      "goals": [
+        "early reading fluency",
+        "addition/subtraction within 20",
+        "write short sentences",
+        "scientific observation",
+        "independent task completion"
+      ],
+      "subjects": {
+        "Language": {
+          "units": [
+            "Phonics CVC/CVCC",
+            "High-frequency Words",
+            "Sentence Building",
+            "Reading Short Passages",
+            "Listening & Retelling"
+          ],
+          "outcomes": [
+            "read decodable sentences",
+            "write 3–5 word sentences",
+            "answer literal comprehension questions"
+          ]
+        },
+        "Mathematics": {
+          "units": [
+            "Place Value to 100",
+            "Addition within 20",
+            "Subtraction within 20",
+            "Time to Hour/Half Hour",
+            "Measurement",
+            "Data & Picture Graphs"
+          ],
+          "outcomes": [
+            "use number lines/ten frames",
+            "solve one-step word problems",
+            "read simple graphs"
+          ]
+        },
+        "Science": {
+          "units": [
+            "Plant Needs",
+            "Animal Groups",
+            "States of Water Intro",
+            "Pushes & Pulls",
+            "Sun Moon & Seasons"
+          ],
+          "outcomes": [
+            "make simple claims from observations",
+            "use basic science vocabulary"
+          ]
+        },
+        "STEM": {
+          "units": [
+            "Marble Run",
+            "Paper Tower",
+            "Intro Block Coding",
+            "Measure & Improve"
+          ],
+          "outcomes": [
+            "plan-test-record-improve",
+            "debug short sequences"
+          ]
+        },
+        "Logic": {
+          "units": [
+            "Chess Piece Basics",
+            "Number Patterns",
+            "Grid Logic",
+            "Tangram Level 1"
+          ],
+          "outcomes": [
+            "plan 1–2 steps ahead",
+            "use constraints"
+          ]
+        },
+        "Life Skills": {
+          "units": [
+            "Study Habits",
+            "Healthy Sleep & Food",
+            "Digital Citizenship Intro",
+            "Friendship Skills",
+            "Simple Budget Pretend"
+          ],
+          "outcomes": [
+            "organize materials",
+            "practice safe device habits"
+          ]
+        },
+        "Creativity": {
+          "units": [
+            "Comic Strip",
+            "Rhythm Patterns",
+            "Model Making",
+            "Creative Writing Prompts"
+          ],
+          "outcomes": [
+            "produce multi-part creative work"
+          ]
+        },
+        "Movement": {
+          "units": [
+            "Coordination Circuits",
+            "Balance Challenge",
+            "Ball Skills",
+            "Mindful Movement"
+          ],
+          "outcomes": [
+            "improve endurance and coordination"
+          ]
+        }
+      }
+    },
+    {
+      "age": 7,
+      "stage": "Foundation Builder",
+      "sessionMinutes": 25,
+      "weeklySessions": 16,
+      "goals": [
+        "reading comprehension",
+        "addition/subtraction fluency",
+        "intro multiplication",
+        "paragraph writing",
+        "evidence-based observation",
+        "basic projects"
+      ],
+      "subjects": {
+        "Language": {
+          "units": [
+            "Fluency & Expression",
+            "Vocabulary in Context",
+            "Main Idea & Detail",
+            "Paragraph Basics",
+            "Grammar: Nouns/Verbs/Adjectives"
+          ],
+          "outcomes": [
+            "read grade-level short texts with support",
+            "write a 3–5 sentence paragraph",
+            "identify main idea"
+          ]
+        },
+        "Mathematics": {
+          "units": [
+            "Place Value to 1000",
+            "Add/Subtract 2-digit",
+            "Multiplication as Groups",
+            "Fractions Halves/Quarters",
+            "Time & Money",
+            "Geometry Basics"
+          ],
+          "outcomes": [
+            "solve two-step arithmetic problems",
+            "represent multiplication",
+            "compare simple fractions"
+          ]
+        },
+        "Science": {
+          "units": [
+            "Food Chains Intro",
+            "Habitats",
+            "Matter Solids/Liquids/Gases",
+            "Simple Circuits",
+            "Weather Measurement"
+          ],
+          "outcomes": [
+            "collect simple data",
+            "build and explain a simple circuit",
+            "compare habitats"
+          ]
+        },
+        "STEM": {
+          "units": [
+            "Bridge Load Test",
+            "Scratch-style Coding Logic",
+            "Water Filter Model",
+            "Simple Robotics Concepts"
+          ],
+          "outcomes": [
+            "document design decisions",
+            "debug branching-free algorithms"
+          ]
+        },
+        "Logic": {
+          "units": [
+            "Chess Tactics Intro",
+            "Sudoku 4x4",
+            "Logic Statements",
+            "Pattern Rules"
+          ],
+          "outcomes": [
+            "explain reasoning",
+            "plan 2–3 moves"
+          ]
+        },
+        "Life Skills": {
+          "units": [
+            "Goal Setting",
+            "Time Planning",
+            "Online Safety",
+            "Conflict Resolution",
+            "Saving vs Spending"
+          ],
+          "outcomes": [
+            "set a weekly goal",
+            "use a simple schedule",
+            "identify scams/unsafe messages"
+          ]
+        },
+        "Creativity": {
+          "units": [
+            "Storyboarding",
+            "Music Patterns",
+            "Design a Poster",
+            "Mini Presentation"
+          ],
+          "outcomes": [
+            "plan-create-revise-share"
+          ]
+        },
+        "Movement": {
+          "units": [
+            "Fitness Basics",
+            "Agility Games",
+            "Ball Control",
+            "Breathing & Focus"
+          ],
+          "outcomes": [
+            "track personal movement goals"
+          ]
+        }
+      }
+    },
+    {
+      "age": 8,
+      "stage": "Primary Explorer",
+      "sessionMinutes": 30,
+      "weeklySessions": 17,
+      "goals": [
+        "independent reading",
+        "multi-step math",
+        "structured writing",
+        "scientific method intro",
+        "project ownership",
+        "digital literacy"
+      ],
+      "subjects": {
+        "Language": {
+          "units": [
+            "Inference Basics",
+            "Summarizing",
+            "Paragraph Expansion",
+            "Grammar & Punctuation",
+            "Speaking & Presentation"
+          ],
+          "outcomes": [
+            "summarize short texts",
+            "make simple inferences",
+            "write organized paragraphs"
+          ]
+        },
+        "Mathematics": {
+          "units": [
+            "Multiplication Facts",
+            "Division Concepts",
+            "Fractions & Number Line",
+            "Area/Perimeter",
+            "Measurement Conversions",
+            "Bar Graphs"
+          ],
+          "outcomes": [
+            "solve multi-step word problems",
+            "use multiplication/division models",
+            "calculate simple perimeter/area"
+          ]
+        },
+        "Science": {
+          "units": [
+            "Ecosystems",
+            "Forces & Motion",
+            "Energy Forms",
+            "Human Body Systems Intro",
+            "Rocks & Soil"
+          ],
+          "outcomes": [
+            "design a fair simple test",
+            "record variables and results",
+            "explain energy/force examples"
+          ]
+        },
+        "STEM": {
+          "units": [
+            "Sensor Concepts",
+            "Coding Loops",
+            "Design a Vehicle",
+            "Build & Test Catapult"
+          ],
+          "outcomes": [
+            "use loops conceptually",
+            "compare prototypes using measured data"
+          ]
+        },
+        "Logic": {
+          "units": [
+            "Chess Strategy",
+            "Sudoku 6x6",
+            "If/Then Logic",
+            "Multi-constraint Puzzles"
+          ],
+          "outcomes": [
+            "justify a strategy",
+            "solve multi-constraint tasks"
+          ]
+        },
+        "Life Skills": {
+          "units": [
+            "Project Planning",
+            "Research Safety",
+            "Digital Footprint",
+            "Team Roles",
+            "Budget a Small Project"
+          ],
+          "outcomes": [
+            "break projects into tasks",
+            "evaluate simple online sources",
+            "manage pretend budgets"
+          ]
+        },
+        "Creativity": {
+          "units": [
+            "Podcast Script",
+            "Digital Storyboard",
+            "Model & Explain",
+            "Creative Coding Art"
+          ],
+          "outcomes": [
+            "combine text/audio/visual ideas"
+          ]
+        },
+        "Movement": {
+          "units": [
+            "Endurance & Pacing",
+            "Coordination Sequences",
+            "Sport Skills",
+            "Mindfulness"
+          ],
+          "outcomes": [
+            "self-monitor effort safely"
+          ]
+        }
+      }
+    },
+    {
+      "age": 9,
+      "stage": "Independent Learner",
+      "sessionMinutes": 35,
+      "weeklySessions": 18,
+      "goals": [
+        "deeper comprehension",
+        "multiplication/division fluency",
+        "multi-paragraph writing",
+        "scientific reasoning",
+        "independent projects",
+        "responsible technology use"
+      ],
+      "subjects": {
+        "Language": {
+          "units": [
+            "Evidence from Text",
+            "Compare Two Texts",
+            "Multi-paragraph Writing",
+            "Vocabulary Roots",
+            "Presentation & Debate Basics"
+          ],
+          "outcomes": [
+            "support answers with evidence",
+            "organize multi-paragraph writing",
+            "compare viewpoints"
+          ]
+        },
+        "Mathematics": {
+          "units": [
+            "Multi-digit Operations",
+            "Long Division Intro",
+            "Equivalent Fractions",
+            "Decimals Intro",
+            "Area/Perimeter Problems",
+            "Data Interpretation"
+          ],
+          "outcomes": [
+            "choose efficient operations",
+            "solve fraction/decimal intro tasks",
+            "interpret tables and graphs"
+          ]
+        },
+        "Science": {
+          "units": [
+            "Cells & Organisms Intro",
+            "Electricity & Magnetism",
+            "Earth Systems",
+            "Engineering Materials",
+            "Scientific Investigation"
+          ],
+          "outcomes": [
+            "form a testable question",
+            "control simple variables",
+            "write a claim-evidence-reasoning explanation"
+          ]
+        },
+        "STEM": {
+          "units": [
+            "Coding Loops & Conditions",
+            "Engineering Design Project",
+            "Simple Data Logging",
+            "AI Concepts for Kids"
+          ],
+          "outcomes": [
+            "design algorithms with conditions",
+            "iterate from test data",
+            "explain training-data concept safely"
+          ]
+        },
+        "Logic": {
+          "units": [
+            "Chess Planning",
+            "Sudoku & KenKen",
+            "Deductive Logic",
+            "Algorithmic Thinking"
+          ],
+          "outcomes": [
+            "compare strategies",
+            "write step-by-step algorithms"
+          ]
+        },
+        "Life Skills": {
+          "units": [
+            "Independent Study Plan",
+            "Media Literacy",
+            "Privacy & Passwords",
+            "Team Leadership",
+            "Saving Goals"
+          ],
+          "outcomes": [
+            "manage a weekly learning plan",
+            "recognize unreliable information",
+            "practice strong privacy habits"
+          ]
+        },
+        "Creativity": {
+          "units": [
+            "Research Poster",
+            "Short Video Plan",
+            "Story Revision Workshop",
+            "Design Portfolio"
+          ],
+          "outcomes": [
+            "revise based on feedback",
+            "present a finished portfolio item"
+          ]
+        },
+        "Movement": {
+          "units": [
+            "Personal Fitness Plan",
+            "Skill Practice Log",
+            "Mobility & Posture",
+            "Stress Regulation"
+          ],
+          "outcomes": [
+            "set and review healthy movement goals"
+          ]
+        }
+      }
+    }
+  ]
+}
