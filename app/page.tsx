@@ -62,7 +62,7 @@ export default function HomePage() {
 
   async function changeChildAge(nextAge:number){
     if(!profile) return;
-    const updated=await fetch("/api/profiles",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:profile.id,age:nextAge,level:Math.max(1,nextAge-2)})}).then(r=>r.json());
+    const updated=await fetch("/api/profiles",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:profile.id,age:nextAge,level:nextAge<=4?1:nextAge===5?2:nextAge<=7?3:nextAge===8?4:5})}).then(r=>r.json());
     if(updated.ok){
       setProfile(updated.profile);
       setLevel(updated.profile.level);
@@ -132,7 +132,9 @@ function LessonStudio({teacher,cameraAllowed,microAllowed,profile,lessons,lang}:
   const [videoOn,setVideoOn]=useState(false);
   const videoRef=useRef<HTMLVideoElement|null>(null);
   const streamRef=useRef<MediaStream|null>(null);
-  const lesson:Lesson=lessons[0] || {id:"en-colors-1",subject:"Language",title:"Colors & Objects",content:{objective:"Recognize colors"},skills:["vocabulary"],version:1};
+  const [lessonIndex,setLessonIndex]=useState(0);
+  useEffect(()=>{ if(lessonIndex >= lessons.length) setLessonIndex(0); },[lessons.length,lessonIndex]);
+  const lesson:Lesson=lessons[lessonIndex] || {id:"loading",subject:"Curriculum",title:"Đang tải bài học...",content:{objective:"Đang đồng bộ dữ liệu bài học."},skills:[],version:1};
 
   useEffect(()=>()=>{streamRef.current?.getTracks().forEach(t=>t.stop())},[]);
 
@@ -193,7 +195,15 @@ function LessonStudio({teacher,cameraAllowed,microAllowed,profile,lessons,lang}:
   }
 
   return <div className="lesson">
-    <section className="card"><small style={{color:"#5f54d9",fontWeight:800}}>{lesson.subject} • v{lesson.version} • Adaptive</small><h2>📘 {lesson.title}</h2><p>{lesson.content?.objective||"Interactive learning session"}</p>
+    <section className="card">
+      <div className="row" style={{justifyContent:"space-between",alignItems:"center",flexWrap:"wrap"}}>
+        <small style={{color:"#5f54d9",fontWeight:800}}>{lesson.subject} • v{lesson.version} • Adaptive</small>
+        {lessons.length>0 && <select value={lessonIndex} onChange={e=>setLessonIndex(Number(e.target.value))} style={{maxWidth:360,border:"1px solid #dfe3ec",borderRadius:12,padding:10}}>
+          {lessons.map((x,i)=><option key={x.id} value={i}>{x.subject} • {x.title}</option>)}
+        </select>}
+      </div>
+      <h2>📘 {lesson.title}</h2><p>{lesson.content?.objective||"Interactive learning session"}</p>
+      {!lessons.length && <div style={{padding:14,borderRadius:14,background:"#fff4e8",color:"#9a5a00",marginBottom:14}}>Chưa nhận được lesson từ server. Hệ thống sẽ tự đồng bộ lại sau khi curriculum service sẵn sàng.</div>}
       <LessonRuntime lesson={lesson} lang={lang} onSpeak={speak}/>
       <hr style={{border:0,borderTop:"1px solid #edf0f5",margin:"22px 0"}}/>
       <h3>🎙 Voice & Camera Lab</h3>
