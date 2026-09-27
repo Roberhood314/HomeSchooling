@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CurriculumRoadmap } from "@/components/curriculum-roadmap";
+import { LessonRuntime } from "@/components/lesson-runtime";
 
 type View = "home" | "lesson" | "assessment" | "parent" | "web3";
 type Teacher = "Jenna" | "JohnPC";
@@ -56,6 +58,15 @@ export default function HomePage() {
     setLessons(data.lessons||[]);
   }
 
+  async function changeChildAge(nextAge:number){
+    if(!profile) return;
+    const updated=await fetch("/api/profiles",{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:profile.id,age:nextAge,level:Math.max(1,nextAge-2)})}).then(r=>r.json());
+    if(updated.ok){
+      setProfile(updated.profile);
+      setLevel(updated.profile.level);
+    }
+  }
+
   async function loginPi(){
     try{
       if(!window.Pi) throw new Error("Pi SDK chưa sẵn sàng");
@@ -86,7 +97,7 @@ export default function HomePage() {
         <div className="langs">{["VI","EN","中文"].map(l=><button key={l} className={lang===l?"on":""} onClick={()=>setLang(l as any)}>{l}</button>)}</div>
       </header>
 
-      {view==="home" && <Home setView={setView} teacher={teacher} setTeacher={setTeacher} level={level} profile={profile} lessons={lessons}/>}
+      {view==="home" && <Home setView={setView} teacher={teacher} setTeacher={setTeacher} level={level} profile={profile} lessons={lessons} onAgeChange={changeChildAge}/>}
       {view==="lesson" && <LessonStudio teacher={teacher} cameraAllowed={camera} microAllowed={micro} profile={profile} lessons={lessons} lang={lang}/>}
       {view==="assessment" && <Assessment done={assessmentDone} setDone={setAssessmentDone} setLevel={setLevel} level={level}/>}
       {view==="parent" && <Parent teacher={teacher} setTeacher={setTeacher} camera={camera} setCamera={setCamera} micro={micro} setMicro={setMicro} profile={profile} loginPi={loginPi} piUser={piUser}/>}
@@ -97,7 +108,7 @@ export default function HomePage() {
 
 function title(v:View){return {home:"Executive Learning Overview",lesson:"Live Lesson Studio",assessment:"Entry Assessment",parent:"Parent Intelligence Hub",web3:"Blockchain, Web3 & Pi Learning Hub"}[v]}
 
-function Home({setView,teacher,setTeacher,level,profile,lessons}:{setView:(v:View)=>void;teacher:Teacher;setTeacher:(t:Teacher)=>void;level:number;profile:Profile|null;lessons:Lesson[]}){
+function Home({setView,teacher,setTeacher,level,profile,lessons,onAgeChange}:{setView:(v:View)=>void;teacher:Teacher;setTeacher:(t:Teacher)=>void;level:number;profile:Profile|null;lessons:Lesson[];onAgeChange:(age:number)=>Promise<void>}){
   const subjects=[["🔤","Ngôn ngữ","Nghe • Nói • Đọc • Viết"],["➗","Toán","Số học • Logic"],["🔬","Khoa học","Khám phá • Thí nghiệm"],["🤖","STEM","Công nghệ • Sáng tạo"],["🧠","Tư duy","Logic • Puzzle"],["🌱","Kỹ năng sống","Tự lập • Cảm xúc"]];
   const width=Math.min(100,35+lessons.length*15)+"%";
   return <div className="grid">
@@ -106,6 +117,7 @@ function Home({setView,teacher,setTeacher,level,profile,lessons}:{setView:(v:Vie
     {subjects.map(([e,t,s])=><section className="card subject" key={t}><div className="emoji">{e}</div><b>{t}</b><div style={{fontSize:12,color:"#7a829b",marginTop:4}}>{s}</div></section>)}
     <button className={"card teacher "+(teacher==="Jenna"?"selected":"")} onClick={()=>setTeacher("Jenna")}><div className="face">👩‍🏫</div><div style={{textAlign:"left"}}><h3>Jenna AI</h3><p>Ngôn ngữ • phát âm • kể chuyện • hướng dẫn nhẹ nhàng.</p></div></button>
     <button className={"card teacher "+(teacher==="JohnPC"?"selected":"")} onClick={()=>setTeacher("JohnPC")}><div className="face">👨‍💻</div><div style={{textAlign:"left"}}><h3>JohnPC AI</h3><p>Toán • khoa học • STEM • logic • công nghệ.</p></div></button>
+    <CurriculumRoadmap age={profile?.age||7} onAgeChange={onAgeChange}/>
     <section className="card web3"><small style={{color:"#73f2ff"}}>EXPLORER / PARENT</small><h2>π Blockchain • Web3 • Pi Learning Hub</h2><p>Khu học công nghệ riêng, child-safe, không có dự đoán giá hoặc lời khuyên đầu tư.</p><div className="tags">{["Blockchain Basics","Web3","Pi Network","Digital Economy"].map(x=><span className="tag" key={x}>{x}</span>)}</div></section>
   </div>
 }
@@ -158,7 +170,7 @@ function LessonStudio({teacher,cameraAllowed,microAllowed,profile,lessons,lang}:
     setMessages(m=>[...m,{role:"me",text}]);setInput("");setBusy(true);
     try{
       const language=lang==="中文"?"zh":lang==="EN"?"en":"vi";
-      const data=await fetch("/api/ai/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({age:profile?.age||7,teacher,language,subject:lesson.subject,message:text})}).then(r=>r.json());
+      const data=await fetch("/api/ai/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({age:profile?.age||7,teacher,language,subject:lesson.subject,lessonTitle:lesson.title,objective:lesson.content?.objective,skillFocus:lesson.skills||[],message:text})}).then(r=>r.json());
       const reply=data.reply||"Thầy/cô chưa trả lời được câu này.";
       setMessages(m=>[...m,{role:"ai",text:reply}]);
       speak(reply);
@@ -180,7 +192,7 @@ function LessonStudio({teacher,cameraAllowed,microAllowed,profile,lessons,lang}:
 
   return <div className="lesson">
     <section className="card"><small style={{color:"#5f54d9",fontWeight:800}}>{lesson.subject} • v{lesson.version} • Adaptive</small><h2>📘 {lesson.title}</h2><p>{lesson.content?.objective||"Interactive learning session"}</p>
-      <div className="choice correct">🍎 <b>Red Apple</b></div><div className="choice">🫐 Blue Berry</div><div className="choice">🍌 Yellow Banana</div>
+      <LessonRuntime lesson={lesson} lang={lang} onSpeak={speak}/>
       <hr style={{border:0,borderTop:"1px solid #edf0f5",margin:"22px 0"}}/>
       <h3>🎙 Voice & Camera Lab</h3>
       <div className="row"><button className="violetBtn" onClick={()=>speak("This is a red apple.")}>🔊 TTS</button><button className="violetBtn" onClick={startSTT}>🎤 STT</button><button className="darkBtn" onClick={toggleCamera}>{videoOn?"⏹ Tắt camera":"📷 Mở camera"}</button></div>
