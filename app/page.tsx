@@ -187,7 +187,7 @@ function LessonStudio({teacher,cameraAllowed,microAllowed,profile,lessons,lang}:
       const data=await fetch("/api/progress",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).then(r=>r.json());
       alert("Đã lưu kết quả. Adaptive Learning: "+(data.next?.message||"updated"));
     }catch{
-      queueOffline({type:"progress",childId:profile.id,payload});
+      queueOffline({eventUuid:crypto.randomUUID(),type:"progress",childId:profile.id,payload});
       alert("Đang offline. Kết quả đã vào hàng đợi và sẽ đồng bộ khi có mạng.");
     }
   }
@@ -250,7 +250,8 @@ async function flushOfflineQueue(childId:string|null){
   const clientId=localStorage.getItem("hs_client_id")||crypto.randomUUID();
   localStorage.setItem("hs_client_id",clientId);
   try{
-    await fetch("/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId,events:q.map((x:any)=>({childId:x.childId||childId,type:x.type,payload:x.payload}))})});
+    const res=await fetch("/api/sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({clientId,events:q.map((x:any)=>({eventUuid:x.eventUuid||crypto.randomUUID(),childId:x.childId||childId,type:x.type,payload:x.payload}))})});
+    if(!res.ok && res.status!==207) throw new Error("sync failed");
     localStorage.removeItem(key);
   }catch{}
 }
