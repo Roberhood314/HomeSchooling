@@ -8,7 +8,8 @@
     "start": "node scripts/migrate.mjs && node scripts/seed-curriculum.mjs && next start",
     "migrate": "node scripts/migrate.mjs",
     "seed:curriculum": "node scripts/seed-curriculum.mjs",
-    "sync:curriculum": "node scripts/sync-curriculum.mjs"
+    "sync:curriculum": "node scripts/sync-curriculum.mjs",
+    "test": "node scripts/validate-curriculum.mjs"
   },
   "dependencies": {
     "ioredis": "^5.4.2",
