@@ -9,6 +9,10 @@ export async function POST(req: NextRequest) {
     teacher: raw.teacher === "JohnPC" ? "JohnPC" : "Jenna",
     language: raw.language === "zh" ? "zh" : raw.language === "en" ? "en" : "vi",
     subject: raw.subject ? String(raw.subject) : undefined,
+    lessonTitle: raw.lessonTitle ? String(raw.lessonTitle) : undefined,
+    objective: raw.objective ? String(raw.objective) : undefined,
+    skillFocus: Array.isArray(raw.skillFocus) ? raw.skillFocus.map(String).slice(0,12) : undefined,
+    mastery: raw.mastery && typeof raw.mastery === "object" ? raw.mastery : undefined,
     message: String(raw.message || "")
   };
 
