@@ -110,9 +110,10 @@ async function syncGlobalASP() {
   const details=[];
   for (const lang of languages) {
     try {
-      const readmeUrl="https://raw.githubusercontent.com/global-asp/global-asp/master/"+encodeURIComponent(lang)+"/README.md";
+      const repoName=lang==="en" ? "asp-source" : "global-asp";
+      const readmeUrl="https://raw.githubusercontent.com/global-asp/"+repoName+"/master/"+encodeURIComponent(lang)+"/README.md";
       const index=parseIndex(await fetchText(readmeUrl));
-      const dirUrl="https://api.github.com/repos/global-asp/global-asp/contents/"+encodeURIComponent(lang)+"?ref=master";
+      const dirUrl="https://api.github.com/repos/global-asp/"+repoName+"/contents/"+encodeURIComponent(lang)+"?ref=master";
       const files=await fetchJson(dirUrl);
       const fileById=new Map();
       for (const f of (Array.isArray(files)?files:[])) {
