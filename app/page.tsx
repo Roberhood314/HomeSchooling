@@ -174,7 +174,7 @@ function LessonStudio({teacher,cameraAllowed,microAllowed,profile,lessons,lang}:
     setMessages(m=>[...m,{role:"me",text}]);setInput("");setBusy(true);
     try{
       const language=lang==="中文"?"zh":lang==="EN"?"en":"vi";
-      const data=await fetch("/api/ai/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({age:profile?.age||7,teacher,language,subject:lesson.subject,lessonTitle:lesson.title,objective:lesson.content?.objective,skillFocus:lesson.skills||[],message:text})}).then(r=>r.json());
+      const data=await fetch("/api/ai/tutor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({childId:profile?.id||null,age:profile?.age||7,teacher,language,subject:lesson.subject,lessonTitle:lesson.title,objective:lesson.content?.objective,skillFocus:lesson.skills||[],message:text})}).then(r=>r.json());
       const reply=data.reply||"Thầy/cô chưa trả lời được câu này.";
       setMessages(m=>[...m,{role:"ai",text:reply}]);
       speak(reply);
