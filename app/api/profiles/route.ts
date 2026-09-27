@@ -25,12 +25,13 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const name = String(body.name || "").trim();
   const age = Number(body.age);
-  if (!name || !Number.isInteger(age) || age < 3 || age > 17) {
+  if (!name || !Number.isInteger(age) || age < 3 || age > 9) {
     return NextResponse.json({ ok: false, error: "Invalid name or age" }, { status: 400 });
   }
   const id = crypto.randomUUID();
   const language = ["vi","en","zh"].includes(body.preferredLanguage) ? body.preferredLanguage : "vi";
-  const level = Math.max(1, Math.min(10, Number(body.level || 1)));
+  const defaultLevel = age <= 4 ? 1 : age === 5 ? 2 : age <= 7 ? 3 : age === 8 ? 4 : 5;
+  const level = Math.max(1, Math.min(5, Number(body.level || defaultLevel)));
   const teacher = body.aiTeacher === "JohnPC" ? "JohnPC" : "Jenna";
   const result = await db().query(
     `INSERT INTO child_profiles(id,parent_id,name,age,preferred_language,level,ai_teacher,goals)
@@ -60,7 +61,7 @@ export async function PATCH(req: NextRequest) {
   if (!Number.isInteger(age) || age < 3 || age > 9) {
     return NextResponse.json({ ok:false, error:"age must be 3-9" }, { status:400 });
   }
-  const level = body.level === undefined ? prev.level : Math.max(1, Math.min(10, Number(body.level)));
+  const level = body.level === undefined ? prev.level : Math.max(1, Math.min(5, Number(body.level)));
   const teacher = body.aiTeacher === undefined ? prev.ai_teacher : body.aiTeacher === "JohnPC" ? "JohnPC" : "Jenna";
   const language = body.preferredLanguage === undefined ? prev.preferred_language : ["vi","en","zh"].includes(body.preferredLanguage) ? body.preferredLanguage : prev.preferred_language;
 
