@@ -12,7 +12,12 @@ const subjectMap = {
   "Life Skills":"Life Skills", Creativity:"Creativity", Movement:"Movement"
 };
 
-function languageForSubject(subject){ return subject==="Language" ? ["vi","en","zh"] : ["vi"]; }
+function languageForSubject(subject){ return ["vi","en","zh"]; }
+
+function difficultyLevel(index, unitCount){
+  if(unitCount<=3) return index+1;
+  return 1 + Math.floor(index * 4 / Math.max(1, unitCount-1));
+}
 function activityType(subject, age){
   if(subject==="Movement") return "movement";
   if(subject==="Creativity") return "create";
@@ -33,7 +38,7 @@ function ageMode(age){
   if(age<=7) return {style:"guided-mastery",assessment:"3–5 checks + one application",parent:"Independent attempt first, then help."};
   return {style:"project-mastery",assessment:"short quiz + explanation/project evidence",parent:"Child leads; parent reviews progress."};
 }
-function buildLesson(age, stage, subject, unit, outcome, index, language){
+function buildLesson(age, stage, subject, unit, outcome, index, language, unitCount){
   const mode=ageMode(age);
   const id=["core",age,subject.toLowerCase().replace(/[^a-z0-9]+/g,"-"),index,language].join("-");
   const title=unit + (language==="en"?"":language==="zh"?"（中文路径）":"");
@@ -46,7 +51,7 @@ function buildLesson(age, stage, subject, unit, outcome, index, language){
     {type:"check",minutes:Math.max(2,Math.round(duration*0.2)),prompt:`Show or explain what you learned about ${unit}.`,assessment:mode.assessment},
     {type:"reflection",minutes:1,prompt:"What felt easy? What would you like to try again?"}
   ];
-  return {id,subject,title,minAge:age,maxAge:age,level:age-2,language,sourceId:"core-internal",version:1,skills:[subject.toLowerCase().replace(/\s+/g,"-"),"age-"+age,"unit-"+(index+1)],content:{stage,unit,objective:outcome || `Build understanding of ${unit}.`,durationMinutes:duration,teachingMode:mode.style,recommendedTeacher:teacherHint(subject),parentGuidance:mode.parent,steps}};
+  return {id,subject,title,minAge:age,maxAge:age,level:difficultyLevel(index,unitCount),language,sourceId:"core-internal",version:1,skills:[subject.toLowerCase().replace(/\s+/g,"-"),"age-"+age,"unit-"+(index+1)],content:{stage,unit,objective:outcome || `Build understanding of ${unit}.`,durationMinutes:duration,teachingMode:mode.style,recommendedTeacher:teacherHint(subject),parentGuidance:mode.parent,steps}};
 }
 
 let total=0;
@@ -57,7 +62,7 @@ for(const band of framework.ages){
     for(let i=0;i<units.length;i++){
       const outcome=outcomes[i % Math.max(1,outcomes.length)] || units[i];
       for(const language of languageForSubject(subject)){
-        const lesson=buildLesson(age,band.stage,subjectMap[subject]||subject,units[i],outcome,i,language);
+        const lesson=buildLesson(age,band.stage,subjectMap[subject]||subject,units[i],outcome,i,language,units.length);
         await pool.query(
           `INSERT INTO lessons(id,subject,title,min_age,max_age,level,language,source_id,version,content,skills,active,updated_at)
            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,TRUE,NOW())
