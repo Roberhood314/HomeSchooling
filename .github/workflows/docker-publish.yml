@@ -16,6 +16,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate curriculum
+        run: npm test
+
+      - name: Build application
+        run: npm run build
+
       - name: Create production source ZIP
         run: |
           zip -r AI-HomeSchool-Production.zip .             -x ".git/*"             -x ".github/*"             -x "node_modules/*"             -x ".next/*"             -x ".env*"             -x "AI-HomeSchool-Production.zip"
