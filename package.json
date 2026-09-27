@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node scripts/migrate.mjs && next start",
+    "start": "node scripts/migrate.mjs && node scripts/seed-curriculum.mjs && next start",
     "migrate": "node scripts/migrate.mjs",
+    "seed:curriculum": "node scripts/seed-curriculum.mjs",
     "sync:curriculum": "node scripts/sync-curriculum.mjs"
   },
   "dependencies": {
