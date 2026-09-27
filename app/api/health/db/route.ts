@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server"; import { dbHealth } from "@/lib/server/db"; export async function GET(){try{return NextResponse.json({ok:true,db:await dbHealth()})}catch(error){return NextResponse.json({ok:false,error:String(error)},{status:503})}}
