@@ -1,0 +1,54 @@
+services:
+  homeschool:
+    image: ghcr.io/roberhood314/homeschooling:latest
+    restart: unless-stopped
+    labels:
+      pi.ui.primary: "true"
+    ports:
+      - "127.0.0.1:18080:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgresql://homeschool:${DATABASE_PASSWORD}@postgres:5432/homeschool
+      REDIS_URL: redis://redis:6379
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL}
+      AI_PROVIDER_ORDER: openai
+      AI_TIMEOUT_MS: "18000"
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: homeschool
+      POSTGRES_USER: homeschool
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - homeschool_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homeschool -d homeschool"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - homeschool_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  homeschool_postgres:
+  homeschool_redis:
