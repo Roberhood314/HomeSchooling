@@ -209,6 +209,18 @@ CREATE INDEX IF NOT EXISTS idx_reports_child ON parent_reports(child_id, period_
 CREATE INDEX IF NOT EXISTS idx_notifications_parent ON notifications(parent_id, created_at DESC);
 
 
+
+INSERT INTO curriculum_sources(id,name,url,license,source_type,enabled)
+VALUES
+ ('littlecat-vn','LittleCat.vn','https://littlecat.vn','Rights not verified; metadata/deep-link only','external-reference',TRUE)
+ON CONFLICT (id) DO UPDATE SET
+ name=EXCLUDED.name,
+ url=EXCLUDED.url,
+ license=EXCLUDED.license,
+ source_type=EXCLUDED.source_type,
+ enabled=TRUE,
+ updated_at=NOW();
+
 INSERT INTO curriculum_sources(id,name,url,license,source_type)
 VALUES
  ('core-internal','AI HomeSchool Core',NULL,'Original / internally authored','internal'),
