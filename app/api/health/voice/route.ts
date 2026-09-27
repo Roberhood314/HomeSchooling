@@ -1,0 +1,1 @@
+import { NextResponse } from "next/server"; export async function GET(){return NextResponse.json({ok:true,mode:"browser-capability",requirements:["speechSynthesis","SpeechRecognition/webkitSpeechRecognition","microphone permission"],note:"Actual device compatibility must be verified client-side."})}
