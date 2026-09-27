@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     let fallbackSubjectSql = "";
     if (subject) {
       fallbackValues.push(subject);
-      fallbackSubjectSql = ` AND subject = ${fallbackValues.length}`;
+      fallbackSubjectSql = ` AND subject = $${fallbackValues.length}`;
     }
     result = await db().query(
       `SELECT l.id,l.subject,l.title,l.min_age,l.max_age,l.level,l.language,l.version,l.content,l.skills,
