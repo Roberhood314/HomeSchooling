@@ -19,10 +19,16 @@ async function applyEvent(client:any,event:any,parentId:string){
   try{
     if(type==="progress"){
       const p=payload;
-      if(!p.childId||!p.lessonId) throw new Error("progress event missing childId/lessonId");
+      if(!p.lessonId) throw new Error("progress event missing lessonId");
+      // Security boundary: childId is taken only from the top-level event after
+      // ownership verification above. A client-controlled payload.childId must
+      // never be allowed to redirect a write to another child profile.
+      if(p.childId && String(p.childId)!==String(childId)) {
+        throw new Error("progress event childId mismatch");
+      }
       await client.query(
         "INSERT INTO learning_progress(child_id,lesson_id,score,duration_seconds,skill_map,state) VALUES($1,$2,$3,$4,$5,$6)",
-        [p.childId,p.lessonId,Math.max(0,Math.min(100,Number(p.score||0))),Math.max(0,Number(p.durationSeconds||0)),JSON.stringify(p.skillMap||{}),JSON.stringify(p.state||{})]
+        [childId,p.lessonId,Math.max(0,Math.min(100,Number(p.score||0))),Math.max(0,Number(p.durationSeconds||0)),JSON.stringify(p.skillMap||{}),JSON.stringify(p.state||{})]
       );
     }
     await client.query("UPDATE sync_events SET applied=TRUE,applied_at=NOW(),apply_error=NULL WHERE id=$1",[rowId]);
