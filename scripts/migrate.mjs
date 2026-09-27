@@ -87,16 +87,25 @@ CREATE TABLE IF NOT EXISTS learning_passport (
 
 CREATE TABLE IF NOT EXISTS sync_events (
   id BIGSERIAL PRIMARY KEY,
+  event_uuid TEXT UNIQUE,
   client_id TEXT NOT NULL,
   child_id TEXT,
   event_type TEXT NOT NULL,
   payload JSONB NOT NULL DEFAULT '{}'::jsonb,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  applied BOOLEAN NOT NULL DEFAULT FALSE,
+  apply_error TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  applied_at TIMESTAMPTZ
 );
 
 CREATE INDEX IF NOT EXISTS idx_child_profiles_parent ON child_profiles(parent_id);
 CREATE INDEX IF NOT EXISTS idx_lessons_filter ON lessons(language, level, min_age, max_age, subject);
 CREATE INDEX IF NOT EXISTS idx_progress_child ON learning_progress(child_id, completed_at DESC);
+ALTER TABLE sync_events ADD COLUMN IF NOT EXISTS event_uuid TEXT;
+ALTER TABLE sync_events ADD COLUMN IF NOT EXISTS applied BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE sync_events ADD COLUMN IF NOT EXISTS apply_error TEXT;
+ALTER TABLE sync_events ADD COLUMN IF NOT EXISTS applied_at TIMESTAMPTZ;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sync_event_uuid ON sync_events(event_uuid) WHERE event_uuid IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_sync_client ON sync_events(client_id, id);
 
 
